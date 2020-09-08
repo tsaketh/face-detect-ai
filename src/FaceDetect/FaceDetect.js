@@ -1,14 +1,14 @@
 import React from 'react';
-import FaceImg from './MYprofile.jpg'
+// import FaceImg from './MYprofile.jpg'
 import './FaceDetect.css';
 
-const FaceDetect =() => {
+const FaceDetect =({ imageUrl }) => {
     return (
         <div className="my-center ma">
             <div className="absolute mt2">
                 <img 
                     width="500px"
-                    src={FaceImg} 
+                    src={imageUrl} 
                     alt="" 
                     height="auto"
                 />

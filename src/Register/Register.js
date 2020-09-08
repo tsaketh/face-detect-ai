@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Register = () => {
+const Register = ({onRouteChange}) => {
     return(
         <main className="pa4 black-80">
-            <form className="measure center">
+            <div className="measure center">
                 <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
                     <legend className="f4 fw6 ph0 mh0">Sign Up</legend>
                     <div className="mt3">
@@ -18,12 +18,16 @@ const Register = () => {
                         <label className="db fw6 lh-copy f6" htmlFor="password">Password</label>
                         <input className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" type="password" name="password"  id="password" />
                     </div>
-                    <label className="pa0 ma0 lh-copy f6 pointer"><input type="checkbox" /> Remember me</label>
+                    {/* <label className="pa0 ma0 lh-copy f6 pointer"><input type="checkbox" /> Remember me</label> */}
                 </fieldset>
                 <div className="">
-                    <input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign Up" />
+                    <input 
+                        className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
+                        type="submit" 
+                        value="Sign Up" 
+                        onClick={()=>{onRouteChange('home')}}/>
                 </div>
-            </form>
+            </div>
         </main>
     )
 }
