@@ -15,17 +15,40 @@ class App extends Component {
     this.state = {
       input:'',
       imageUrl:'',
+      user: {},
       // box = {},
       route:'signin',
       isSignedIn:false
     }
+  }
+  getUser = (user) => {
+    this.setState({user: user});
   }
   onInputChange = (event) => {
     this.setState({input: event.target.value})
   }
   onImageSubmit = () =>{
     this.setState({imageUrl: this.state.input})
-    console.log("click")
+    fetch("http://localhost:3001/image", {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"id": this.state.user.id})
+    }).then(Response => {
+      if (Response.status === 200) {
+        return Response.json();
+      } else {
+        return -1;
+      }
+    }).then(user => {
+      if (user === -1) {
+        console.log(user);
+      } else {
+        this.setState({user: user});
+      }
+    }).catch(console.log);
+    this.onRouteChange('home');
   }
   // faceCalculation(){
 
@@ -35,7 +58,7 @@ class App extends Component {
   // }
   onRouteChange=(route)=>{
     if (route === 'home') {
-      this.setState({isSignedIn: true})
+      this.setState({isSignedIn: true});
     } else{
       this.setState({isSignedIn: false})
     }
@@ -48,13 +71,13 @@ class App extends Component {
         <Logo />
         {(this.state.route === 'home')? (
           <div>
-            <Rank />
+            <Rank user = {this.state.user}/>
             <ImageSubmitForm onInputChange = {this.onInputChange} onImageSubmit = {this.onImageSubmit}/>
             <FaceDetect imageUrl = {this.state.imageUrl}/>
           </div>
         ): ((this.state.route === 'signin')? (
-          <SignIn onRouteChange = {this.onRouteChange}/>
-        ): (<Register onRouteChange = {this.onRouteChange}/>))}
+          <SignIn onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>
+        ): (<Register onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>))}
       </div>
     )
   }
