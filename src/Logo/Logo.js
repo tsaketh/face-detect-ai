@@ -4,7 +4,7 @@ import Logoicon from './smartbrainlogo.png';
 const Logo = () => {
     return (
         <img 
-            className = "pa3 grow"
+            className = "ph3 my-vpad grow"
             src={Logoicon} 
             alt=""/>
     )

@@ -1,23 +1,19 @@
 import React from 'react';
+import './ImageSubmitForm.css';
 
 const ImageSubmitForm = ({onInputChange, onImageSubmit}) => {
     return (
-        <div 
-            className="flex flex-grow pa3 justify-center"
-            style={{
-                marginLeft: "33.33%", 
-                marginRight: "33.33%"
-            }}>
+        <article className="flex justify-center pa3 br2 ba dark-gray b--black-10 mw6 center shadow-5 my-pattern">
             <input 
-                style={{width: "50rem"}}
-                className="pa2 input-reset ba bg-transparent hover-bg-black hover-white "
+                // style={{width: "50rem"}}
+                className="pa2 input-reset ba b--black hover-bg-black hover-white "
                 type="text"
                 onChange={onInputChange}/>
             <input 
                 className="b white ph3 pv2 input-reset ba b--black bg-black grow pointer f6 dib"
                 type="submit" value="Detect Face"
                 onClick={onImageSubmit}/>
-        </div>
+        </article>
     )
 }
 export default ImageSubmitForm;

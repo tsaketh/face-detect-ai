@@ -6,8 +6,20 @@ import Navigation from './Navigation/Navigation';
 import Rank from './Rank/Rank';
 import Logo from './Logo/Logo';
 import FaceDetect from './FaceDetect/FaceDetect';
+// import Validations from './Validations/Validations';
 import Register from './Register/Register';
+import Profile from './Profile/Profile';
 import 'tachyons';
+import Particles from 'react-particles-js';
+const particleParams = {
+  number: {
+    density: {
+      enable: true,
+      value_area: 800,
+    },
+    value: 80
+  }
+}
 
 class App extends Component {
   constructor(){
@@ -16,7 +28,6 @@ class App extends Component {
       input:'',
       imageUrl:'',
       user: {},
-      // box = {},
       route:'signin',
       isSignedIn:false
     }
@@ -29,7 +40,7 @@ class App extends Component {
   }
   onImageSubmit = () =>{
     this.setState({imageUrl: this.state.input})
-    fetch("http://localhost:3001/image", {
+    fetch("https://smart-brain-login-ts110798.herokuapp.com/image", {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -43,21 +54,18 @@ class App extends Component {
       }
     }).then(user => {
       if (user === -1) {
-        console.log(user);
+        alert("Server unresponsive. Please check your internet connection as first troubleshooting measure. Try again after sometime")
       } else {
         this.setState({user: user});
       }
-    }).catch(console.log);
+    }).catch(alert);
     this.onRouteChange('home');
   }
-  // faceCalculation(){
-
-  // }
   // faceBox(){
 
   // }
   onRouteChange=(route)=>{
-    if (route === 'home') {
+    if (route === 'home' || route === 'profile') {
       this.setState({isSignedIn: true});
     } else{
       this.setState({isSignedIn: false})
@@ -67,17 +75,20 @@ class App extends Component {
   render(){
     return(
       <div>
-        <Navigation isSignedIn = {this.state.isSignedIn} onRouteChange = {this.onRouteChange}/>
-        <Logo />
+        <Particles className='my-particles' params = {particleParams}/>
+        <Navigation isSignedIn = {this.state.isSignedIn} route = {this.state.route} onRouteChange = {this.onRouteChange}/>
         {(this.state.route === 'home')? (
           <div>
+            <Logo />
             <Rank user = {this.state.user}/>
             <ImageSubmitForm onInputChange = {this.onInputChange} onImageSubmit = {this.onImageSubmit}/>
-            <FaceDetect imageUrl = {this.state.imageUrl}/>
+            {(this.state.imageUrl !== '')?(<FaceDetect imageUrl = {this.state.imageUrl}/>):(<div></div>)}
           </div>
-        ): ((this.state.route === 'signin')? (
+        ): (this.state.route === 'profile')? (
+          <Profile userInfo = {this.state.user}/>
+        ): (this.state.route === 'signin')? (
           <SignIn onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>
-        ): (<Register onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>))}
+        ): (<Register onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>)}
       </div>
     )
   }
