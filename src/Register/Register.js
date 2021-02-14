@@ -68,7 +68,7 @@ class Register extends Component{
                 }
                 return res.json();
             }).then(data => {
-                if (data === "The email already exists.") {
+                if (data === "The email already exists." || data === "All fields are Mandatory. Please fill!") {
                     this.setState({errors: data});
                 } else {
                     this.props.getUser(data);
