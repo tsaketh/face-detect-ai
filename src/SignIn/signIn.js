@@ -21,7 +21,7 @@ class SignIn extends Component {
 
     authenticateUser = () =>{
         this.setState({errors: ""});
-        fetch("https://smart-brain-login-ts110798.herokuapp.com/signin", {
+        fetch("https://smart-brain-login-ts110798.herokuapp.com/signin", { //https://smart-brain-login-ts110798.herokuapp.com
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

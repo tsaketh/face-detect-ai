@@ -1,15 +1,15 @@
 import React from 'react';
-// import MYprofile from '../FaceDetect/MYprofile.jpg';
+import MYprofile from '../FaceDetect/MYprofile.png';
 
-const Navigation = ({isSignedIn, route, onRouteChange}) => {
+const Navigation = ({isSignedIn, route, onRouteChange, avatarId}) => {
     if (isSignedIn) {
         if (route === 'home') {
             return (
                 <nav className="flex-grow pa flex items-center justify-end bb b--white-10 bg-black my-top">
-                    {/* <div className="mh3 mt3 mb2">
-                        <img className="my-profile pointer" src={MYprofile} alt="" width="30px" height="30px"
+                    <div className="mh3 mt3 mb2">
+                        <img className="my-profile pointer" src={(avatarId)?`https://robohash.org/${avatarId}?set=set2&size=30x30`:MYprofile} alt="" width="30px" height="30px"
                             onClick = {()=>onRouteChange('profile')}/>
-                    </div> */}
+                    </div>
                     <p 
                         onClick={()=>onRouteChange('signin')}
                         className="f6 dib white bg-animate hover-bg-white hover-black no-underline pv2 ph4 br-pill ba b--white-20 pointer" 

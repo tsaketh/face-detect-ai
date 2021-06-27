@@ -10,7 +10,8 @@ class Register extends Component{
             password: "",
             nameError: "",
             emailError: "",
-            passwordError: ""
+            passwordError: "",
+            errors: ""
         }
     }
     onNameChange = (event) => {
@@ -52,7 +53,7 @@ class Register extends Component{
     onSignUp = () => {
         this.setState({errors: ""});
         if (this.state.nameError === "" && this.state.emailError === "" && this.state.passwordError === "") {
-            fetch("https://smart-brain-login-ts110798.herokuapp.com/signup", {
+            fetch("https://smart-brain-login-ts110798.herokuapp.com/signup", { //https://smart-brain-login-ts110798.herokuapp.com
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json'

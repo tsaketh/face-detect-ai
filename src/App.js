@@ -72,11 +72,14 @@ class App extends Component {
     }
     this.setState({route: route})
   }
+  
   render(){
+    const bodyElement = document.getElementsByTagName('body');
+    bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, "+this.state.user.start_color+", "+this.state.user.end_color+")";
     return(
       <div>
         <Particles className='my-particles' params = {particleParams}/>
-        <Navigation isSignedIn = {this.state.isSignedIn} route = {this.state.route} onRouteChange = {this.onRouteChange}/>
+        <Navigation isSignedIn = {this.state.isSignedIn} route = {this.state.route} onRouteChange = {this.onRouteChange} avatarId = {this.state.user.avatar_id}/>
         {(this.state.route === 'home')? (
           <div>
             <Logo />
@@ -85,7 +88,7 @@ class App extends Component {
             {(this.state.imageUrl !== '')?(<FaceDetect imageUrl = {this.state.imageUrl}/>):(<div></div>)}
           </div>
         ): (this.state.route === 'profile')? (
-          <Profile userInfo = {this.state.user}/>
+          <Profile userInfo = {this.state.user} getUser = {this.getUser}/>
         ): (this.state.route === 'signin')? (
           <SignIn onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>
         ): (<Register onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>)}
