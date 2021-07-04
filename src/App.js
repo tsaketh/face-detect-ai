@@ -11,6 +11,10 @@ import Register from './Register/Register';
 import Profile from './Profile/Profile';
 import 'tachyons';
 import Particles from 'react-particles-js';
+
+import { connect } from 'react-redux';
+import { image, inputChange, routeChange } from './Actions';
+
 const particleParams = {
   number: {
     density: {
@@ -18,6 +22,21 @@ const particleParams = {
       value_area: 800,
     },
     value: 80
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    input: state.onInputChange.input,
+    route: state.onRouteChange.route,
+    isSignedIn: state.onRouteChange.isSignedIn
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onInputChange: (event) => dispatch(inputChange(event.target.value)),
+    onRouteChange: (route) => dispatch(routeChange(route))
   }
 }
 
@@ -97,4 +116,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
