@@ -29,88 +29,91 @@ const mapStateToProps = (state) => {
   return {
     input: state.onInputChange.input,
     route: state.onRouteChange.route,
-    isSignedIn: state.onRouteChange.isSignedIn
+    isSignedIn: state.onRouteChange.isSignedIn,
+    user: (state.userSignIn.user.length>0)?state.userSignIn.user:state.userSignUp.user
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onInputChange: (event) => dispatch(inputChange(event.target.value)),
-    onRouteChange: (route) => dispatch(routeChange(route))
+    onRouteChange: (route) => dispatch(routeChange(route)),
+    onImageSubmit: (user) => dispatch(image(user))
   }
 }
 
 class App extends Component {
-  constructor(){
-    super();
-    this.state = {
-      input:'',
-      imageUrl:'',
-      user: {},
-      route:'signin',
-      isSignedIn:false
-    }
-  }
-  getUser = (user) => {
-    this.setState({user: user});
-  }
-  onInputChange = (event) => {
-    this.setState({input: event.target.value})
-  }
-  onImageSubmit = () =>{
-    this.setState({imageUrl: this.state.input})
-    fetch("https://smart-brain-login-ts110798.herokuapp.com/image", {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({"id": this.state.user.id})
-    }).then(Response => {
-      if (Response.status === 200) {
-        return Response.json();
-      } else {
-        return -1;
-      }
-    }).then(user => {
-      if (user === -1) {
-        alert("Server unresponsive. Please check your internet connection as first troubleshooting measure. Try again after sometime")
-      } else {
-        this.setState({user: user});
-      }
-    }).catch(alert);
-    this.onRouteChange('home');
-  }
-  // faceBox(){
-
+  // constructor(){
+  //   super();
+  //   this.state = {
+  //     input:'',
+  //     imageUrl:'',
+  //     user: {},
+  //     route:'signin',
+  //     isSignedIn:false
+  //   }
   // }
-  onRouteChange=(route)=>{
-    if (route === 'home' || route === 'profile') {
-      this.setState({isSignedIn: true});
-    } else{
-      this.setState({isSignedIn: false})
-    }
-    this.setState({route: route})
-  }
+  // getUser = (user) => {
+  //   this.setState({user: user});
+  // }
+  // onInputChange = (event) => {
+  //   this.setState({input: event.target.value})
+  // }
+  // onImageSubmit = () =>{
+  //   this.setState({imageUrl: this.state.input})
+  //   fetch("https://smart-brain-login-ts110798.herokuapp.com/image", {
+  //     method: 'PUT',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({"id": this.state.user.id})
+  //   }).then(Response => {
+  //     if (Response.status === 200) {
+  //       return Response.json();
+  //     } else {
+  //       return -1;
+  //     }
+  //   }).then(user => {
+  //     if (user === -1) {
+  //       alert("Server unresponsive. Please check your internet connection as first troubleshooting measure. Try again after sometime")
+  //     } else {
+  //       this.setState({user: user});
+  //     }
+  //   }).catch(alert);
+  //   this.onRouteChange('home');
+  // }
+  // // faceBox(){
+
+  // // }
+  // onRouteChange=(route)=>{
+  //   if (route === 'home' || route === 'profile') {
+  //     this.setState({isSignedIn: true});
+  //   } else{
+  //     this.setState({isSignedIn: false})
+  //   }
+  //   this.setState({route: route})
+  // }
   
   render(){
+    const {user, isSignedIn, route, onRouteChange, onInputChange, onImageSubmit, input} = this.props;
     const bodyElement = document.getElementsByTagName('body');
-    bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, "+this.state.user.start_color+", "+this.state.user.end_color+")";
+    bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, "+user.start_color+", "+user.end_color+")";
     return(
       <div>
         <Particles className='my-particles' params = {particleParams}/>
-        <Navigation isSignedIn = {this.state.isSignedIn} route = {this.state.route} onRouteChange = {this.onRouteChange} avatarId = {this.state.user.avatar_id}/>
-        {(this.state.route === 'home')? (
+        <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} avatarId = {user.avatar_id}/>
+        {(route === 'home')? (
           <div>
             <Logo />
-            <Rank user = {this.state.user}/>
-            <ImageSubmitForm onInputChange = {this.onInputChange} onImageSubmit = {this.onImageSubmit}/>
-            {(this.state.imageUrl !== '')?(<FaceDetect imageUrl = {this.state.imageUrl}/>):(<div></div>)}
+            <Rank user = {user}/>
+            <ImageSubmitForm onInputChange = {onInputChange} onImageSubmit = {onImageSubmit}/>
+            {(input !== '')?(<FaceDetect imageUrl = {input}/>):(<div></div>)}
           </div>
-        ): (this.state.route === 'profile')? (
-          <Profile userInfo = {this.state.user} getUser = {this.getUser}/>
-        ): (this.state.route === 'signin')? (
-          <SignIn onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>
-        ): (<Register onRouteChange = {this.onRouteChange} getUser = {this.getUser}/>)}
+        ): (route === 'profile')? (
+          <Profile userInfo = {user}/>
+        ): (route === 'signin')? (
+          <SignIn onRouteChange = {onRouteChange}/>
+        ): (<Register onRouteChange = {onRouteChange}/>)}
       </div>
     )
   }

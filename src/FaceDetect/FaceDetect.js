@@ -3,73 +3,52 @@ import { Component } from 'react';
 // import FaceImg from './DSC_0285.JPG'
 import './FaceDetect.css';
 
+import {connect} from 'react-redux';
+import { getFaces } from '../Actions';
+
+const mapStateToProps = (state) => {
+    return {
+        boxes: state.userSubmitImage.boxes
+    }
+}
+  
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getFaces: (imageURL) => dispatch(getFaces(imageURL))
+    }
+}
+
 class FaceDetect extends Component{
-    constructor(){
-        super();
-        this.state={
-            boxes:[]
-        }
-    }
-    faceCalculation=(data)=>{
-        const imageselected = document.getElementById('input-image');
-        const imagewidth = imageselected.width;
-        const imageheight = imageselected.height;
-        let boxes = []
-        data.forEach(element => {
-            boxes.push({'leftCol': element.left*imagewidth, 'topRow': element.top*imageheight, 'rightCol': imagewidth-(element.right*imagewidth), 'bottomRow': imageheight-(element.bottom*imageheight)})
-        });
-        return boxes;
-    }
-    setBoundingBoxes=(data)=>{
-        this.setState({boxes:data})
-    }
+    // constructor(){
+    //     super();
+    //     this.state={
+    //         boxes:[]
+    //     }
+    // }
+    // faceCalculation=(data)=>{
+    //     const imageselected = document.getElementById('input-image');
+    //     const imagewidth = imageselected.width;
+    //     const imageheight = imageselected.height;
+    //     let boxes = []
+    //     data.forEach(element => {
+    //         boxes.push({'leftCol': element.left*imagewidth, 'topRow': element.top*imageheight, 'rightCol': imagewidth-(element.right*imagewidth), 'bottomRow': imageheight-(element.bottom*imageheight)})
+    //     });
+    //     return boxes;
+    // }
+    // setBoundingBoxes=(data)=>{
+    //     this.setState({boxes:data})
+    // }
 
     componentDidUpdate(prevprops){
         if (this.props.imageUrl !== prevprops.imageUrl) {
-            fetch("https://face-detection-ts110798.herokuapp.com/api/v1/getfaces", {
-            method: 'POST', 
-            headers: {
-                'content-type': 'application/json'
-            }, 
-            body: JSON.stringify({"imgURL": this.props.imageUrl})
-            }).then(res=>{
-            if(res.status === 200){
-                return res.json();
-            } else {
-                return -1;
-            }
-            }).then(faces=>{
-            if(faces===-1){
-                alert("Server is not responsive. Please check your internet and try again");
-            } else{
-                this.setBoundingBoxes(this.faceCalculation(faces))
-            }
-            })
+            this.props.getFaces(this.props.imageUrl);
         }
     }
     componentDidMount(){
-        fetch("https://face-detection-ts110798.herokuapp.com/api/v1/getfaces", {
-          method: 'POST', 
-          headers: {
-            'content-type': 'application/json'
-          }, 
-          body: JSON.stringify({"imgURL": this.props.imageUrl})
-        }).then(res=>{
-          if(res.status === 200){
-            return res.json();
-          } else {
-            return -1;
-          }
-        }).then(faces=>{
-          if(faces===-1){
-            alert("Server is not responsive. Please check your internet and try again");
-          } else{
-            this.setBoundingBoxes(this.faceCalculation(faces))
-          }
-        })
+        this.props.getFaces(this.props.imageUrl);
     }
     render(){
-        const bounding_boxes = this.state.boxes.map(({leftCol, topRow, rightCol, bottomRow})=>{
+        const bounding_boxes = this.props.boxes.map(({leftCol, topRow, rightCol, bottomRow})=>{
             return <div style={{
                 top:topRow, 
                 right:rightCol,
@@ -93,4 +72,4 @@ class FaceDetect extends Component{
         )
     }
 }
-export default FaceDetect;
+export default connect(mapStateToProps, mapDispatchToProps)(FaceDetect);
