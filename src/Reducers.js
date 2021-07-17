@@ -2,6 +2,7 @@ import { CHANGE_AVATAR,
     CHANGE_CONFIRM_PASSWORD, 
     CHANGE_EMAIL,
     CHANGE_END_COLOR,
+    CHANGE_IMAGE_URL,
     CHANGE_INPUT,
     CHANGE_NEW_PASSWORD, 
     CHANGE_OLD_PASSWORD, 
@@ -28,18 +29,12 @@ import { CHANGE_AVATAR,
     TOGGLE_MODAL_STATE_PIC, 
     TOGGLE_MODAL_STATE_RD, 
     TOGGLE_MODAL_STATE_RP,
-    UPDATE_AVATAR_FAILED,
-    UPDATE_AVATAR_PENDING,
-    UPDATE_AVATAR_SUCCESS,
     UPDATE_GENERAL_INFO_FAILED,
     UPDATE_GENERAL_INFO_PENDING,
     UPDATE_GENERAL_INFO_SUCCESS,
     UPDATE_PASSWORD_FAILED,
-    UPDATE_PASSWORD_PENDING,
-    UPDATE_PASSWORD_SUCCESS,
-    UPDATE_PERSONALIZATION_FAILED,
-    UPDATE_PERSONALIZATION_PENDING,
-    UPDATE_PERSONALIZATION_SUCCESS} from './Constants';
+    UPDATE_PASSWORD_SUCCESS
+} from './Constants';
 
 const InitialInput = {
     input: ''
@@ -49,6 +44,19 @@ export const onInputChange = (state=InitialInput, action={}) => {
     switch (action.type) {
         case CHANGE_INPUT:
             return Object.assign({}, state, {input: action.payload});
+        default:
+            return state;
+    }
+}
+
+const InitialImage = {
+    imageURL: ''
+}
+
+export const onImageURLChange = (state=InitialImage, action={}) => {
+    switch (action.type) {
+        case CHANGE_IMAGE_URL:
+            return Object.assign({}, state, {imageURL: action.payload});
         default:
             return state;
     }
@@ -98,7 +106,7 @@ const InitialPassword = {
 export const onPasswordChange = (state=InitialPassword, action={}) => {
     switch (action.type) {
         case CHANGE_PASSWORD:
-            return Object.assign({}, state, {name: action.payload});
+            return Object.assign({}, state, {password: action.payload});
         case SIGNUP_PASSWORD:
             if(action.payload.trim().length<=8 &&
                 (action.payload.match(/[^a-zA-Z0-9]+/) === null || 
@@ -137,7 +145,7 @@ export const onNameChange = (state = InitialName, action = {}) => {
                 return Object.assign({}, state, {name: action.payload, nameError: ""});
             }
         default:
-            break;
+            return state;
     }
 }
 
@@ -152,15 +160,15 @@ const InitialModalStates = {
 export const triggerModal = (state=InitialModalStates, action={}) => {
     switch (action.type) {
         case TOGGLE_MODAL_STATE_GI:
-            return Object.assign({}, state, {modalStateGI: !modalStateGI});
+            return Object.assign({}, state, {modalStateGI: !state.modalStateGI});
         case TOGGLE_MODAL_STATE_PIC:
-            return Object.assign({}, state, {modalStatePic: !modalStatePic});
+            return Object.assign({}, state, {modalStatePic: !state.modalStatePic});
         case TOGGLE_MODAL_STATE_PER:
-            return Object.assign({}, state, {modalStatePer: !modalStatePer});
+            return Object.assign({}, state, {modalStatePer: !state.modalStatePer});
         case TOGGLE_MODAL_STATE_RD:
-            return Object.assign({}, state, {modalStateRD: !modalStateRD});
+            return Object.assign({}, state, {modalStateRD: !state.modalStateRD});
         case TOGGLE_MODAL_STATE_RP:
-            return Object.assign({}, state, {modalStateRP: !modalStateRP});
+            return Object.assign({}, state, {modalStateRP: !state.modalStateRP});
         default:
             return state;
     }
@@ -175,7 +183,7 @@ export const onOldPasswordChange = (state = InitialOldPassword, action = {}) => 
         case CHANGE_OLD_PASSWORD:
             return Object.assign({}, state, {oldPassword: action.payload});
         default:
-            break;
+            return state;
     }
 }
 
@@ -207,33 +215,15 @@ export const onNewPasswordChange = (state = InitialStatePasswordUpdate, action =
                 return Object.assign({}, state, {newPassword: action.payload, passwordUpdateErrors: ""});
             }
         case CHANGE_CONFIRM_PASSWORD:
-            if (action.payload.confirmPassword.trim().length>0 && action.payload.confirmPassword !== action.payload.newPassword) {
+            if (action.payload.trim().length>0 && action.payload !== state.newPassword) {
                 return Object.assign({}, state, {passwordUpdateErrors: "Password does not match with new password!"});
             } else {
-                return Object.assign({}, state, {confirmPassword: action.payload.confirmPassword, passwordUpdateErrors: ""});
+                return Object.assign({}, state, {confirmPassword: action.payload, passwordUpdateErrors: ""});
             }
         default:
             return state;
     }
 }
-
-// const InitialConfirmPassword = {
-//     confirmPassword: '',
-//     passwordUpdateErrors: ''
-// }
-
-// export const onConfirmPasswordChange = (state=InitialConfirmPassword, action={}) => {
-//     switch (action.type) {
-//         case CHANGE_CONFIRM_PASSWORD:
-//             if (action.payload.confirmPassword.trim().length>0 && action.payload.confirmPassword !== action.payload.newPassword) {
-//                 return Object.assign({}, state, {passwordUpdateErrors: "Password does not match with new password!"});
-//             } else {
-//                 return Object.assign({}, state, {confirmPassword: action.payload.confirmPassword, passwordUpdateErrors: ""});
-//             }
-//         default:
-//             return state;
-//     }
-// }
 
 const InitialStartColor = {
     startColor: ''
@@ -248,7 +238,7 @@ export const onStartColorChange = (state = InitialStartColor, action = {}) => {
     }
 }
 
-const InitialEndStartColor = {
+const InitialEndColor = {
     endColor: ''
 }
 
@@ -280,56 +270,6 @@ const InitialStateUser = {
     user: {}
 }
 
-export const userSignIn = (state = InitialStateUser, action = {}) => {
-    switch (action.type) {
-        case REQUEST_SIGNIN_PENDING:
-            return Object.assign({}, state, {isPending: true});
-        case REQUEST_SIGNIN_FAILED:
-            if (action.payload === "Invalid Email or Password" || action.payload === "Error Logging in. Please check your network and try again") {
-                return Object.assign({}, state, {isPending: false, errors: action.payload});
-            } else {
-                alert(action.payload);
-                return Object.assign({}, state, {isPending:false});
-            }
-        case REQUEST_SIGNIN_SUCCESS:
-            return Object.assign({}, state, {user: action.payload, isPending: false, errors: ''});
-        default:
-            return state;
-    }
-}
-
-export const userSignUp = (state = InitialStateUser, action = {}) => {
-    switch (aciton.type) {
-        case REQUEST_SIGNUP_PENDING:
-            return Object.assign({}, state, {isPending: true});
-        case REQUEST_SIGNUP_FAILED:
-            if (action.payload === "The email already exists." || action.payload === "All fields are Mandatory. Please fill!") {
-                return Object.assign({}, state, {isPending: false, errors: action.payload});
-            } else {
-                alert(action.payload);
-                return Object.assign({}, state, {isPending:false});
-            }
-        case REQUEST_SIGNUP_SUCCESS:
-            return Object.assign({}, state, {isPending: false, errors: '', user: action.payload});
-        default:
-            return state;
-    }
-}
-
-export const userSubmitImage = (state = InitialStateUser, action = {}) => {
-    switch (action.type) {
-        case REQUEST_IMAGE_PENDING:
-            return Object.assign({}, state, {isPending: true});
-        case REQUEST_IMAGE_FAILED:
-            alert(action.payload);
-            return Object.assign({}, state, {isPending:false});
-        case REQUEST_IMAGE_SUCCESS:
-            return Object.assign({}, state, {isPending: false, user: action.payload});
-        default:
-            return state;
-    }
-}
-
 const InitialBoundingBoxes = {
     requestBoxPending: true,
     boxes: []
@@ -357,17 +297,57 @@ export const getBoundingBoxesForFaces = (state = InitialBoundingBoxes, action = 
 }
 
 export const updateUserData = (state = InitialStateUser, action = {}) => {
+    // let obj = '';
+    // console.log('prevState', state);
+    // console.log('action', action.type);
     switch (action.type) {
-        case UPDATE_GENERAL_INFO_PENDING || UPDATE_PERSONALIZATION_PENDING || UPDATE_PASSWORD_PENDING || UPDATE_AVATAR_PENDING:
+        case REQUEST_SIGNIN_PENDING:
+            return Object.assign({}, state, {isPending: true});
+        case REQUEST_SIGNIN_FAILED:
+            if (action.payload === "Invalid Email or Password" || action.payload === "Error Logging in. Please check your network and try again") {
+                return Object.assign({}, state, {isPending: false, errors: action.payload});
+            } else {
+                alert(action.payload);
+                return Object.assign({}, state, {isPending:false});
+            }
+        case REQUEST_SIGNIN_SUCCESS:
+            return Object.assign({}, state, {user: action.payload, isPending: false, errors: ''});
+        case REQUEST_SIGNUP_PENDING:
+            return Object.assign({}, state, {isPending: true});
+        case REQUEST_SIGNUP_FAILED:
+            if (action.payload === "The email already exists." || action.payload === "All fields are Mandatory. Please fill!") {
+                return Object.assign({}, state, {isPending: false, errors: action.payload});
+            } else {
+                alert(action.payload);
+                return Object.assign({}, state, {isPending:false});
+            }
+        case REQUEST_SIGNUP_SUCCESS:
+            return Object.assign({}, state, {isPending: false, errors: '', user: action.payload});
+        case REQUEST_IMAGE_PENDING:
+            return Object.assign({}, state, {isPending: true});
+        case REQUEST_IMAGE_FAILED:
+            alert(action.payload);
+            return Object.assign({}, state, {isPending:false});
+        case REQUEST_IMAGE_SUCCESS:
+            return Object.assign({}, state, {isPending: false, user: action.payload});
+        case UPDATE_GENERAL_INFO_PENDING:
             return Object.assign({}, state, {isPending:true});
-        case UPDATE_GENERAL_INFO_FAILED || UPDATE_PASSWORD_FAILED || UPDATE_PERSONALIZATION_FAILED || UPDATE_AVATAR_FAILED:
-            if (action.payload === "The email already exists." || action.payload === "All fields are Mandatory. Please fill!" || action.payload === "Invalid request. Please contact support" || (action.type === UPDATE_PASSWORD_FAILED && action.payload !== "Success")) {
+        case UPDATE_GENERAL_INFO_FAILED:
+            console.log('actionExecuted: ', action.type);
+            if (action.payload === "The email already exists." || action.payload === "All fields are Mandatory. Please fill!" || action.payload === "Invalid request. Please contact support") {
                 return Object.assign({}, state, {isPending: false, errors: action.payload});
             } else {
                 alert(action.payload);
                 return Object.assign({}, state, {isPending: false, errors:''});
             }
-        case UPDATE_GENERAL_INFO_SUCCESS || UPDATE_PERSONALIZATION_SUCCESS || UPDATE_AVATAR_SUCCESS:
+        case UPDATE_PASSWORD_FAILED:
+            if (action.payload !== "Success") {
+                return Object.assign({}, state, {isPending: false, errors: action.payload});
+            } else {
+                alert(action.payload);
+                return Object.assign({}, state, {isPending: false, errors:''});
+            }
+        case UPDATE_GENERAL_INFO_SUCCESS:
             return Object.assign({}, state, {isPending:false, errors:'', user:action.payload});
         case UPDATE_PASSWORD_SUCCESS:
             return Object.assign({}, state, {isPending: false, errors: ''});

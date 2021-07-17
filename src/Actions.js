@@ -1,23 +1,20 @@
 import { CHANGE_AVATAR, 
     CHANGE_CONFIRM_PASSWORD, 
     CHANGE_EMAIL, 
-    CHANGE_EMAIL_ERROR, 
     CHANGE_END_COLOR, 
     CHANGE_INPUT, 
     SIGNUP_NAME, 
-    CHANGE_NAME_ERROR, 
     CHANGE_NEW_PASSWORD, 
     CHANGE_OLD_PASSWORD, 
     CHANGE_PASSWORD, 
-    CHANGE_PASSWORD_ERROR, 
     CHANGE_ROUTE, 
     CHANGE_START_COLOR,
     TOGGLE_MODAL_STATE_GI, 
     TOGGLE_MODAL_STATE_PIC, 
     TOGGLE_MODAL_STATE_RD,
+    TOGGLE_MODAL_STATE_RP,
     SIGNUP_EMAIL,
     SIGNUP_PASSWORD, 
-    UPDATE_PASSWORD,
     REQUEST_SIGNIN_PENDING,
     SIGNIN_API,
     REQUEST_SIGNIN_SUCCESS,
@@ -36,19 +33,23 @@ import { CHANGE_AVATAR,
     UPDATE_USER_API,
     UPDATE_GENERAL_INFO_FAILED,
     UPDATE_GENERAL_INFO_SUCCESS,
-    UPDATE_PASSWORD_PENDING,
     UPDATE_PASSWORD_API,
     UPDATE_PASSWORD_SUCCESS,
     UPDATE_PASSWORD_FAILED,
-    UPDATE_PERSONALIZATION_PENDING,
+    REQUEST_SIGNUP_FAILED,
+    REQUEST_SIGNUP_PENDING,
+    // SIGNIN_API_LOCAL,
+    // SIGNUP_API_LOCAL,
+    // IMAGE_API_LOCAL,
+    // FACE_DETECT_API_LOCAL,
+    // UPDATE_USER_API_LOCAL,
+    // UPDATE_PASSWORD_API_LOCAL,
+    // UPDATE_PERSONALIZATION_API_LOCAL,
+    // UPDATE_AVATAR_API_LOCAL,
+    TOGGLE_MODAL_STATE_PER,
+    CHANGE_IMAGE_URL,
     UPDATE_PERSONALIZATION_API,
-    UPDATE_PERSONALIZATION_FAILED,
-    UPDATE_PERSONALIZATION_SUCCESS,
-    UPDATE_AVATAR_PENDING,
-    UPDATE_AVATAR_API,
-    UPDATE_AVATAR_FAILED,
-    UPDATE_AVATAR_SUCCESS,
-    REQUEST_SIGNUP_FAILED} from './Constants';
+    UPDATE_AVATAR_API} from './Constants';
 
 export const routeChange = (text) => ({
     type: CHANGE_ROUTE,
@@ -57,6 +58,11 @@ export const routeChange = (text) => ({
 
 export const inputChange = (text) => ({
     type: CHANGE_INPUT,
+    payload: text
+})
+
+export const imageURLChange = (text) => ({
+    type: CHANGE_IMAGE_URL,
     payload: text
 })
 
@@ -85,32 +91,12 @@ export const passwordChangeSignup = (text) => ({
     payload: text
 })
 
-export const updatePasswordChange = (text) => ({
-    type: UPDATE_PASSWORD,
-    payload: text
-})
-
-export const nameErrorChange = (text) => ({
-    type: CHANGE_NAME_ERROR,
-    payload: text
-})
-
-export const emailErrorChange = (text) => ({
-    type: CHANGE_EMAIL_ERROR,
-    payload: text
-})
-
-export const passwordErrorChange = (text) => ({
-    type: CHANGE_PASSWORD_ERROR,
-    payload: text
-})
-
 export const toggleGIModal = () => ({
     type: TOGGLE_MODAL_STATE_GI
 })
 
 export const togglePerModal = () => ({
-    type: TOGGLE_MODAL_STATE_GI
+    type: TOGGLE_MODAL_STATE_PER
 })
 
 export const toggleRDModal = () => ({
@@ -157,8 +143,7 @@ export const changeAvatar = (text) => ({
 
 export const signin = (email, password) => (dispatch) => {
     dispatch({type: REQUEST_SIGNIN_PENDING})
-    // this.setState({errors: ""});
-    fetch(SIGNIN_API, { //https://smart-brain-login-ts110798.herokuapp.com
+    fetch(SIGNIN_API, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -184,7 +169,7 @@ export const signin = (email, password) => (dispatch) => {
 
 export const signup = (name, email, password) => (dispatch) => {
     dispatch({type: REQUEST_SIGNUP_PENDING})
-    fetch(SIGNUP_API, { //https://smart-brain-login-ts110798.herokuapp.com
+    fetch(SIGNUP_API, { 
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
@@ -208,7 +193,7 @@ export const signup = (name, email, password) => (dispatch) => {
     });
 }
 
-export const image = (user) => (dispatch) => {
+export const image = (user, input) => (dispatch) => {
     dispatch({type: REQUEST_IMAGE_PENDING})
     fetch(IMAGE_API, {
       method: 'PUT',
@@ -227,6 +212,7 @@ export const image = (user) => (dispatch) => {
         dispatch({type: REQUEST_IMAGE_FAILED, payload: "Server unresponsive. Please check your internet connection as first troubleshooting measure. Try again after sometime"})
       } else {
         dispatch({type: REQUEST_IMAGE_SUCCESS, payload: user})
+        dispatch(imageURLChange(input))
       }
     }).catch(error => {
         dispatch({type: REQUEST_IMAGE_FAILED, payload: error})
@@ -261,7 +247,7 @@ export const getFaces = (imageUrl) => (dispatch) => {
 
 export const updateUser = (userInfo, name, email) => (dispatch) => {
     dispatch({type: UPDATE_GENERAL_INFO_PENDING})
-    fetch(UPDATE_USER_API, { //http://127.0.0.1:3001
+    fetch(UPDATE_USER_API, { 
         method: 'PUT',
         headers: {
             'Content-type': 'application/json'
@@ -286,7 +272,7 @@ export const updateUser = (userInfo, name, email) => (dispatch) => {
 }
 
 export const updatePassword = (userInfo, oldPassword, newPassword) => (dispatch) => {
-    dispatch({type: UPDATE_PASSWORD_PENDING})
+    dispatch({type: UPDATE_GENERAL_INFO_PENDING})
     fetch(UPDATE_PASSWORD_API, {
         method: 'PUT',
         headers: {
@@ -312,7 +298,7 @@ export const updatePassword = (userInfo, oldPassword, newPassword) => (dispatch)
 }
 
 export const setBGTheme = (userInfo, startColor, endColor) => (dispatch) =>{
-    dispatch({type: UPDATE_PERSONALIZATION_PENDING})
+    dispatch({type: UPDATE_GENERAL_INFO_PENDING})
     fetch(UPDATE_PERSONALIZATION_API, {
         method: 'PUT',
         headers: {
@@ -327,18 +313,18 @@ export const setBGTheme = (userInfo, startColor, endColor) => (dispatch) =>{
         return Response.json();
     }).then(data => {
         if (data === "Internal Server Error. Please contact support!" || data === "Operation failed. Please check your internet connection") {
-            dispatch({type: UPDATE_PERSONALIZATION_FAILED, payload: data});
+            dispatch({type: UPDATE_GENERAL_INFO_FAILED, payload: data});
         } else {
-            dispatch({type: UPDATE_PERSONALIZATION_SUCCESS, payload: data});
+            dispatch({type: UPDATE_GENERAL_INFO_SUCCESS, payload: data});
             dispatch(togglePerModal());
         }
     }).catch(error => {
-        dispatch({type: UPDATE_PERSONALIZATION_FAILED, payload: error});
+        dispatch({type: UPDATE_GENERAL_INFO_FAILED, payload: error});
     });
 }
 
 export const resetBGTheme = (userInfo) => (dispatch) =>{
-    dispatch({type: UPDATE_PERSONALIZATION_PENDING})
+    dispatch({type: UPDATE_GENERAL_INFO_PENDING})
     fetch(UPDATE_PERSONALIZATION_API, {
         method: 'PUT',
         headers: {
@@ -353,18 +339,18 @@ export const resetBGTheme = (userInfo) => (dispatch) =>{
         return Response.json();
     }).then(data => {
         if (data === "Internal Server Error. Please contact support!" || data === "Operation failed. Please check your internet connection") {
-            dispatch({type: UPDATE_PERSONALIZATION_FAILED, payload: data});
+            dispatch({type: UPDATE_GENERAL_INFO_FAILED, payload: data});
         } else {
-            dispatch({type: UPDATE_PERSONALIZATION_SUCCESS, payload: data});
+            dispatch({type: UPDATE_GENERAL_INFO_SUCCESS, payload: data});
             dispatch(toggleRDModal());
         }
     }).catch(error => {
-        dispatch({type: UPDATE_PERSONALIZATION_FAILED, payload: error});
+        dispatch({type: UPDATE_GENERAL_INFO_FAILED, payload: error});
     });
 }
 
 export const setProfileAvatar = (userInfo, avatar) => (dispatch) => {
-    dispatch({type: UPDATE_AVATAR_PENDING})
+    dispatch({type: UPDATE_GENERAL_INFO_PENDING})
     fetch(UPDATE_AVATAR_API, {
         method: 'PUT',
         headers: {
@@ -378,12 +364,12 @@ export const setProfileAvatar = (userInfo, avatar) => (dispatch) => {
         return Response.json();
     }).then(data => {
         if (data === "Internal Server Error. Please contact support!" || data === "Operation failed. Please check your internet connection") {
-            dispatch({type: UPDATE_AVATAR_FAILED, payload: data});
+            dispatch({type: UPDATE_GENERAL_INFO_FAILED, payload: data});
         } else {
-            dispatch({type: UPDATE_AVATAR_SUCCESS, payload: data});
+            dispatch({type: UPDATE_GENERAL_INFO_SUCCESS, payload: data});
             dispatch(togglePicModal());
         }
     }).catch(error => {
-        dispatch({type: UPDATE_AVATAR_FAILED, payload: error});
+        dispatch({type: UPDATE_GENERAL_INFO_FAILED, payload: error});
     });
 }
