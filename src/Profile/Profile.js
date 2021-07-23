@@ -8,6 +8,7 @@ import AvatarArray from './AvatarArray';
 
 import { connect } from 'react-redux';
 import { changeAvatar, changeConfirmPassword, changeEndColor, changeNewPassword, changeOldPassword, changeStartColor, emailChangeSignup, nameChangeSignup, resetBGTheme, setBGTheme, setProfileAvatar, toggleGIModal, togglePerModal, togglePicModal, toggleRDModal, toggleRPModal, updatePassword, updateUser } from '../Actions';
+import Loader from '../Loader/Loader';
 
 const mapStateToProps = (state) => {
     return {
@@ -28,7 +29,8 @@ const mapStateToProps = (state) => {
         emailError: state.onEmailChange.emailError,
         passwordError: state.onNewPasswordChange.passwordUpdateErrors,
         errors: state.updateUserData.errors,
-        user: state.updateUserData.user
+        user: state.updateUserData.user,
+        isPending: state.updateUserData.isPending
     }
 }
   
@@ -84,27 +86,27 @@ class Profile extends Component {
             onOldPasswordChange, onNewPasswordChange, onConfirmPasswordChange, passwordError, 
             modalStatePic, setAvatar, 
             triggerModalPer, triggerModalRD, modalStatePer, startColor, endColor, setStartColor, setEndColor, 
-            onStartColorChange, onEndColorChange, modalStateRD} = this.props;
+            onStartColorChange, onEndColorChange, modalStateRD, isPending} = this.props;
         return (
-            <div className="flex mv5 pa3 justify-between">
-                <div className="ma2 bg-transparent w-50 ba br2 b--black-10 shadow-5 black-80">
+            <div className="potrait-block mv5 pa3 justify-between">
+                <div className="profile-block-left bg-transparent ba br2 b--black-10 shadow-5 black-80">
                     <div className="flex-grow flex items-center justify-between ph3">
-                        <p className="f4 fw6">General Information</p>
-                        <p className="f6 dib black-80 bg-animate hover-bg-black hover-white no-underline pv2 ph4 br-pill ba b--black-20 pointer"
+                        <p className="profile-item-header">General Information</p>
+                        <p className="profile-item-content dib black-80 bg-animate hover-bg-black hover-white no-underline pv2 ph4 br-pill ba b--black-20 pointer"
                             onClick={triggerModalGI}>Edit</p>
                     </div>
                     <div className="bb b--black-10"></div>
                     <div className="flex justify-between pa3">
                         <div>
-                            <p className="f6">{user.name}</p>
-                            <p className='f6'>{user.email}</p>
+                            <p className="profile-item-content">{user.name}</p>
+                            <p className='profile-item-content'>{user.email}</p>
                         </div>
                         <div>
                             <img src={(user.avatar_id)?`https://robohash.org/${user.avatar_id}?set=set2&size=120x120`:MYprofile} alt="" width="120px" height="120px"/>
-                            <p className="f7 link dim pointer ph3 dark-blue underline" onClick={triggerModalPic}>Change Picture</p>
+                            <p className="profile-item-links link dim pointer ph3 dark-blue underline" onClick={triggerModalPic}>Change Picture</p>
                         </div>
                     </div>
-                    <p className="f7 link dim pointer ph3 dark-blue underline" onClick={triggerModalRP}>Change Password</p>
+                    <p className="profile-item-links link dim pointer ph3 dark-blue underline" onClick={triggerModalRP}>Change Password</p>
                     <Modal modalState={modalStateGI} setModalState={triggerModalGI} userPrefs={user}>
                         <legend className="f4 fw6 ph0 mh0 center black-80">Edit Your Details</legend>
                         <div className="mt3">
@@ -184,26 +186,26 @@ class Profile extends Component {
                         </div>
                     </CardArray>
                 </div>
-                <div className="ma2 bg-transparent w-50 ba br2 b--black-10 shadow-5 black-80">
+                <div className="profile-block-right bg-transparent ba br2 b--black-10 shadow-5 black-80">
                     <div className="flex-grow flex items-center justify-between ph3">
-                        <p className="f4 fw6">Personalization</p>
-                        <p className="f6 dib black-80 bg-animate hover-bg-black hover-white no-underline pv2 ph4 br-pill ba b--black-20 pointer"
+                        <p className="profile-item-header">Personalization</p>
+                        <p className="profile-item-content dib black-80 bg-animate hover-bg-black hover-white no-underline pv2 ph4 br-pill ba b--black-20 pointer"
                             onClick={triggerModalPer}>Edit</p>
                     </div>
                     <div className="bb b--black-10"></div>
                     <div className="flex justify-between pa3">
                         <div>
-                            <p className="f6">Current background</p>
+                            <p className="profile-item-content">Current background</p>
                             <div className="flex">
-                                <input className="ph3 pv2 ba b--black f6 dib" id="current-start-color" type="submit" value="on left" style={{backgroundColor: user.start_color, color: user.end_color}}/>
-                                <input className="ph3 pv2 ba b--black f6 dib" id="current-end-color" type="submit" value="to right" style={{backgroundColor: user.end_color, color: user.start_color}}/>
+                                <input className="ph3 pv2 ba b--black profile-item-content dib" id="current-start-color" type="submit" value="on left" style={{backgroundColor: user.start_color, color: user.end_color}}/>
+                                <input className="ph3 pv2 ba b--black profile-item-content dib" id="current-end-color" type="submit" value="to right" style={{backgroundColor: user.end_color, color: user.start_color}}/>
                             </div>
                         </div>
                         {/* <div>
                             <img src={MYprofile} alt="" width="120px" height="120px"/>
                         </div> */}
                     </div>
-                    <p className="f7 link dim pointer ph3 dark-blue underline" onClick={triggerModalRD}>Reset to Default</p>
+                    <p className="profile-item-links link dim pointer ph3 dark-blue underline" onClick={triggerModalRD}>Reset to Default</p>
                     <Modal modalState={modalStatePer} setModalState={triggerModalPer} userPrefs={user} startColor = {startColor} endColor={endColor} setStartColor={setStartColor} setEndColor={setEndColor}>
                         <legend className="f4 fw6 ph0 mh0 center black-80">Edit Background theme</legend>
                         <div className="mt3">
@@ -251,6 +253,7 @@ class Profile extends Component {
                         </div>
                     </Modal>
                 </div>
+                <Loader isPending={isPending} message="Please wait while smart brain updates your data"/>:
             </div>
         )
     }

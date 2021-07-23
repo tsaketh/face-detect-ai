@@ -54,3 +54,5 @@ export const UPDATE_AVATAR_API = "https://smart-brain-login-ts110798.herokuapp.c
 // export const UPDATE_PASSWORD_API_LOCAL = "http://127.0.0.1:3001/update-password"
 // export const UPDATE_PERSONALIZATION_API_LOCAL = "http://127.0.0.1:3001/bg-theme"
 // export const UPDATE_AVATAR_API_LOCAL = "http://127.0.0.1:3001/profile-avatar"
+//https://smart-brain-login-ts110798.herokuapp.com/
+//https://face-detection-ts110798.herokuapp.com/
