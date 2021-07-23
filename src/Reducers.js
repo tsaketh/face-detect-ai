@@ -266,12 +266,12 @@ export const setAvatar = (state = InitialAvatar, action = {}) => {
 
 const InitialStateUser = {
     errors: '',
-    isPending: true,
+    isPending: false,
     user: {}
 }
 
 const InitialBoundingBoxes = {
-    requestBoxPending: true,
+    requestBoxPending: false,
     boxes: []
 }
 

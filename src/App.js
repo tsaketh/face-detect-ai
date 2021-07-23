@@ -13,7 +13,6 @@ import Particles from 'react-particles-js';
 
 import { connect } from 'react-redux';
 import { image, inputChange, routeChange } from './Actions';
-import { onImageURLChange } from './Reducers';
 
 const particleParams = {
   number: {
@@ -39,8 +38,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onInputChange: (event) => dispatch(inputChange(event.target.value)),
     onRouteChange: (route) => dispatch(routeChange(route)),
-    onSubmitImage: (user, input) => dispatch(image(user, input)),
-    onImageURLChange: (text) => dispatch(onImageURLChange(text))
+    onSubmitImage: (user, input) => dispatch(image(user, input))
   }
 }
 
@@ -62,7 +60,7 @@ class App extends Component {
             <Logo />
             <Rank user = {user}/>
             <ImageSubmitForm onInputChange = {onInputChange} onImageSubmit = {this.onImageSubmit} />
-            {(imageUrl !== '')?(<FaceDetect imageUrl = {input}/>):(<div></div>)}
+            {(imageUrl !== '')?(<FaceDetect imageUrl = {imageUrl}/>):(<div></div>)}
           </div>
         ): (route === 'profile')? (
           <Profile/>

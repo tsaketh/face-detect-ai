@@ -5,9 +5,12 @@ import './FaceDetect.css';
 import {connect} from 'react-redux';
 import { getFaces } from '../Actions';
 
+import Loader from '../Loader/Loader';
+
 const mapStateToProps = (state) => {
     return {
-        boxes: state.getBoundingBoxesForFaces.boxes
+        boxes: state.getBoundingBoxesForFaces.boxes,
+        isPending: state.getBoundingBoxesForFaces.requestBoxPending
     }
 }
   
@@ -27,7 +30,8 @@ class FaceDetect extends Component{
         this.props.getFaces(this.props.imageUrl);
     }
     render(){
-        const bounding_boxes = this.props.boxes.map(({leftCol, topRow, rightCol, bottomRow})=>{
+        const {isPending, imageUrl, boxes} = this.props;
+        const bounding_boxes = boxes.map(({leftCol, topRow, rightCol, bottomRow})=>{
             return <div style={{
                 top:topRow, 
                 right:rightCol,
@@ -41,12 +45,13 @@ class FaceDetect extends Component{
                     <img 
                         id='input-image'
                         width="500px"
-                        src={this.props.imageUrl} 
+                        src={imageUrl} 
                         alt="" 
                         height="auto"
                     />
                     {bounding_boxes}
                 </div>
+                <Loader isPending={isPending} message="Please wait while smart brain detects and trace the faces in the picture"/>:
             </div>
         )
     }
