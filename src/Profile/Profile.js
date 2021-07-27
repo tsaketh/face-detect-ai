@@ -253,7 +253,7 @@ class Profile extends Component {
                         </div>
                     </Modal>
                 </div>
-                <Loader isPending={isPending} message="Please wait while smart brain updates your data"/>:
+                <Loader isPending={isPending} message="Please wait while smart brain updates your data"/>
             </div>
         )
     }

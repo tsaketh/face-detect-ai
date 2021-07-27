@@ -48,7 +48,7 @@ class App extends Component {
   }
   
   render(){
-    const {user, isSignedIn, route, onRouteChange, onInputChange, input, imageUrl} = this.props;
+    const {user, isSignedIn, route, onRouteChange, onInputChange, imageUrl} = this.props;
     const bodyElement = document.getElementsByTagName('body');
     bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, "+user.start_color+", "+user.end_color+")";
     return(
