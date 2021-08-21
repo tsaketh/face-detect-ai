@@ -52,7 +52,6 @@ class App extends Component {
   render(){
     const {user, isSignedIn, route, onRouteChange, onInputChange, imageUrl, onUserSignOut} = this.props;
     const bodyElement = document.getElementsByTagName('body');
-    console.log(user)
     if(user.hasOwnProperty("start_color") && user.hasOwnProperty("end_color")){
       bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, "+user.start_color+", "+user.end_color+")";
     } else {
