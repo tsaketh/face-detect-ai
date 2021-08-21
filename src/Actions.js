@@ -49,11 +49,16 @@ import { CHANGE_AVATAR,
     TOGGLE_MODAL_STATE_PER,
     CHANGE_IMAGE_URL,
     UPDATE_PERSONALIZATION_API,
-    UPDATE_AVATAR_API} from './Constants';
+    UPDATE_AVATAR_API,
+    SIGN_OUT_USER} from './Constants';
 
 export const routeChange = (text) => ({
     type: CHANGE_ROUTE,
     payload: text
+})
+
+export const signoutUser = () => ({
+    type: SIGN_OUT_USER
 })
 
 export const inputChange = (text) => ({

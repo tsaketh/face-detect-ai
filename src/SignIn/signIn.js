@@ -4,6 +4,7 @@ import Validations from '../Validations/Validations';
 import { connect } from 'react-redux';
 import { emailChange, passwordChange, routeChange, signin } from '../Actions';
 import Loader from '../Loader/Loader';
+import { Link } from 'react-router-dom';
 
 
 const mapStateToProps = (state) => {
@@ -61,9 +62,11 @@ class SignIn extends Component {
                                     type="submit" 
                                     value="Sign in" 
                                     onClick={this.authenticateUser}/>
-                                <p 
-                                    className="f6 link dim black db pointer"
-                                    onClick={()=>{onRouteChange('signup')}}>Sign up</p>
+                                <Link to="/signup">
+                                    <p 
+                                        className="f6 link dim black db pointer"
+                                        onClick={()=>{onRouteChange('signup')}}>Sign up</p>
+                                </Link>
                             </div>
                             {/* <div className="lh-copy mt3 my-center">
                                 <p 

@@ -24,6 +24,7 @@ import { CHANGE_AVATAR,
     SIGNUP_EMAIL, 
     SIGNUP_NAME, 
     SIGNUP_PASSWORD, 
+    SIGN_OUT_USER, 
     TOGGLE_MODAL_STATE_GI, 
     TOGGLE_MODAL_STATE_PER, 
     TOGGLE_MODAL_STATE_PIC, 
@@ -63,14 +64,13 @@ export const onImageURLChange = (state=InitialImage, action={}) => {
 }
 
 const InitialRoute = {
-    route: 'signin',
-    isSignedIn: false
+    route: 'signin'
 }
 
 export const onRouteChange = (state=InitialRoute, action={}) => {
     switch (action.type) {
         case CHANGE_ROUTE:
-            return Object.assign({}, state, {route: action.payload, isSignedIn: (action.payload==="home" || action.payload==="profile")?true:false});
+            return Object.assign({}, state, {route: action.payload});
         default:
             return state;
     }
@@ -267,6 +267,7 @@ export const setAvatar = (state = InitialAvatar, action = {}) => {
 const InitialStateUser = {
     errors: '',
     isPending: false,
+    isSignedIn: false,
     user: {}
 }
 
@@ -305,24 +306,24 @@ export const updateUserData = (state = InitialStateUser, action = {}) => {
             return Object.assign({}, state, {isPending: true});
         case REQUEST_SIGNIN_FAILED:
             if (action.payload === "Invalid Email or Password" || action.payload === "Error Logging in. Please check your network and try again") {
-                return Object.assign({}, state, {isPending: false, errors: action.payload});
+                return Object.assign({}, state, {isPending: false, errors: action.payload, isSignedIn: false});
             } else {
                 alert(action.payload);
-                return Object.assign({}, state, {isPending:false});
+                return Object.assign({}, state, {isPending:false, isSignedIn: false});
             }
         case REQUEST_SIGNIN_SUCCESS:
-            return Object.assign({}, state, {user: action.payload, isPending: false, errors: ''});
+            return Object.assign({}, state, {user: action.payload, isPending: false, errors: '', isSignedIn: true});
         case REQUEST_SIGNUP_PENDING:
             return Object.assign({}, state, {isPending: true});
         case REQUEST_SIGNUP_FAILED:
             if (action.payload === "The email already exists." || action.payload === "All fields are Mandatory. Please fill!") {
-                return Object.assign({}, state, {isPending: false, errors: action.payload});
+                return Object.assign({}, state, {isPending: false, errors: action.payload, isSignedIn: false});
             } else {
                 alert(action.payload);
-                return Object.assign({}, state, {isPending:false});
+                return Object.assign({}, state, {isPending:false, isSignedIn: false});
             }
         case REQUEST_SIGNUP_SUCCESS:
-            return Object.assign({}, state, {isPending: false, errors: '', user: action.payload});
+            return Object.assign({}, state, {isPending: false, errors: '', user: action.payload, isSignedIn:true});
         case REQUEST_IMAGE_PENDING:
             return Object.assign({}, state, {isPending: true});
         case REQUEST_IMAGE_FAILED:
@@ -351,6 +352,11 @@ export const updateUserData = (state = InitialStateUser, action = {}) => {
             return Object.assign({}, state, {isPending:false, errors:'', user:action.payload});
         case UPDATE_PASSWORD_SUCCESS:
             return Object.assign({}, state, {isPending: false, errors: ''});
+        case SIGN_OUT_USER:
+            return Object.assign({}, state, {errors: '',
+            isPending: false,
+            isSignedIn: false,
+            user: {}})
         default:
             return state;
     }

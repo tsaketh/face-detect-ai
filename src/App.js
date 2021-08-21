@@ -12,7 +12,8 @@ import 'tachyons';
 import Particles from 'react-particles-js';
 
 import { connect } from 'react-redux';
-import { image, inputChange, routeChange } from './Actions';
+import { image, inputChange, routeChange, signoutUser } from './Actions';
+import { Route, HashRouter as Router, Switch, Redirect } from 'react-router-dom';
 
 const particleParams = {
   number: {
@@ -29,7 +30,7 @@ const mapStateToProps = (state) => {
     input: state.onInputChange.input,
     imageUrl: state.onImageURLChange.imageURL,
     route: state.onRouteChange.route,
-    isSignedIn: state.onRouteChange.isSignedIn,
+    isSignedIn: state.updateUserData.isSignedIn,
     user: state.updateUserData.user
   }
 }
@@ -38,7 +39,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onInputChange: (event) => dispatch(inputChange(event.target.value)),
     onRouteChange: (route) => dispatch(routeChange(route)),
-    onSubmitImage: (user, input) => dispatch(image(user, input))
+    onSubmitImage: (user, input) => dispatch(image(user, input)),
+    onUserSignOut: () => dispatch(signoutUser())
   }
 }
 
@@ -48,26 +50,47 @@ class App extends Component {
   }
   
   render(){
-    const {user, isSignedIn, route, onRouteChange, onInputChange, imageUrl} = this.props;
+    const {user, isSignedIn, route, onRouteChange, onInputChange, imageUrl, onUserSignOut} = this.props;
     const bodyElement = document.getElementsByTagName('body');
-    bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, "+user.start_color+", "+user.end_color+")";
+    console.log(user)
+    if(user.hasOwnProperty("start_color") && user.hasOwnProperty("end_color")){
+      bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, "+user.start_color+", "+user.end_color+")";
+    } else {
+      bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, #859398, #283048)";
+    }
     return(
-      <div>
-        <Particles className='my-particles' params = {particleParams}/>
-        <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} avatarId = {user.avatar_id}/>
-        {(route === 'home')? (
-          <div>
-            <Logo />
-            <Rank user = {user}/>
-            <ImageSubmitForm onInputChange = {onInputChange} onImageSubmit = {this.onImageSubmit} />
-            {(imageUrl !== '')?(<FaceDetect imageUrl = {imageUrl}/>):(<div></div>)}
-          </div>
-        ): (route === 'profile')? (
-          <Profile/>
-        ): (route === 'signin')? (
-          <SignIn onRouteChange = {onRouteChange}/>
-        ): (<Register onRouteChange = {onRouteChange}/>)}
-      </div>
+      <Router>
+        {isSignedIn?<Redirect to={`/${route}`}/>:<></>}
+        <Switch>
+          <Route path="/signin">
+            <Particles className='my-particles' params = {particleParams}/>
+            <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+            <SignIn onRouteChange = {onRouteChange}/>
+          </Route>
+          <Route path="/signup">
+            <Particles className='my-particles' params = {particleParams}/>
+            <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+            <Register onRouteChange = {onRouteChange}/>
+          </Route>
+          <Route path="/profile">
+            {!isSignedIn?<Redirect to="/signin"/>:<></>}
+            <Particles className='my-particles' params = {particleParams}/>
+            <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+            <Profile/>
+          </Route>
+          <Route path="/">
+            {!isSignedIn?<Redirect to="/signin"/>:<></>}
+            <Particles className='my-particles' params = {particleParams}/>
+            <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+            <div>
+              <Logo />
+              <Rank user = {user}/>
+              <ImageSubmitForm onInputChange = {onInputChange} onImageSubmit = {this.onImageSubmit} />
+              {(imageUrl !== '')?(<FaceDetect imageUrl = {imageUrl}/>):(<div></div>)}
+            </div>
+          </Route>
+        </Switch>
+      </Router>
     )
   }
 }
