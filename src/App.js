@@ -59,17 +59,17 @@ class App extends Component {
     }
     return(
       <div>
-        {isSignedIn?location.state?.from?<Redirect to={location.state?.from}/>:<Redirect to={`/${route}`}/>:<></>}
+        {isSignedIn?<Redirect to={location.state?.from || `${route}`}/>:<></>}
         <Switch>
           <Route exact path="/signin">
             <Particles className='my-particles' params = {particleParams}/>
             <Navigation isSignedIn = {isSignedIn} route = "signin" onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
-            <SignIn onRouteChange = {onRouteChange}/>
+            <SignIn onRouteChange = {onRouteChange} toRoute = {location.state?.from.substring(1) || 'home'}/>
           </Route>
           <Route exact path="/signup">
             <Particles className='my-particles' params = {particleParams}/>
             <Navigation isSignedIn = {isSignedIn} route = "signup" onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
-            <Register onRouteChange = {onRouteChange}/>
+            <Register onRouteChange = {onRouteChange} />
           </Route>
           <Route exact path="/profile">
             {!isSignedIn

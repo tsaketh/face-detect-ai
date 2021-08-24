@@ -2,7 +2,7 @@ import React, {Component} from  'react';
 import Validations from '../Validations/Validations';
 
 import { connect } from 'react-redux';
-import { emailChange, passwordChange, routeChange, signin } from '../Actions';
+import { emailChange, passwordChange, signin } from '../Actions';
 import Loader from '../Loader/Loader';
 import { Link } from 'react-router-dom';
 
@@ -21,14 +21,14 @@ const mapDispatchToProps = (dispatch) => {
     return {
       onEmailChange: (event) => dispatch(emailChange(event.target.value)),
       onPasswordChange: (event) => dispatch(passwordChange(event.target.value)),
-      onRouteChange: (route) => dispatch(routeChange(route)),
-      signInUser: (email, password) => dispatch(signin(email, password))
+    //   onRouteChange: (route) => dispatch(routeChange(route)),
+      signInUser: (email, password, toRoute) => dispatch(signin(email, password, toRoute))
     }
 }
 
 class SignIn extends Component {
     authenticateUser = () => {
-        this.props.signInUser(this.props.email, this.props.password);
+        this.props.signInUser(this.props.email, this.props.password, this.props.toRoute);
     }
     render(){
         const {onRouteChange, onEmailChange, onPasswordChange, errors, isPending} = this.props;

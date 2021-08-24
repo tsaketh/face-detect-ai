@@ -146,7 +146,7 @@ export const changeAvatar = (text) => ({
     payload: text
 })
 
-export const signin = (email, password) => (dispatch) => {
+export const signin = (email, password, toRoute) => (dispatch) => {
     dispatch({type: REQUEST_SIGNIN_PENDING})
     fetch(SIGNIN_API, { 
         method: 'POST',
@@ -165,7 +165,7 @@ export const signin = (email, password) => (dispatch) => {
                 dispatch({type: REQUEST_SIGNIN_FAILED, payload: data});
         } else {
             dispatch({type: REQUEST_SIGNIN_SUCCESS, payload: data});
-            dispatch(routeChange('home'));
+            dispatch(routeChange(toRoute));
         }
     }).catch(error => {
         dispatch({type: REQUEST_SIGNIN_FAILED, payload: error})
