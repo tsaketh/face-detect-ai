@@ -13,7 +13,7 @@ import Particles from 'react-particles-js';
 
 import { connect } from 'react-redux';
 import { image, inputChange, routeChange, signoutUser } from './Actions';
-import { Route, HashRouter as Router, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, withRouter} from 'react-router-dom';
 
 const particleParams = {
   number: {
@@ -50,7 +50,7 @@ class App extends Component {
   }
   
   render(){
-    const {user, isSignedIn, route, onRouteChange, onInputChange, imageUrl, onUserSignOut} = this.props;
+    const {user, isSignedIn, route, onRouteChange, onInputChange, imageUrl, onUserSignOut, location} = this.props;
     const bodyElement = document.getElementsByTagName('body');
     if(user.hasOwnProperty("start_color") && user.hasOwnProperty("end_color")){
       bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, "+user.start_color+", "+user.end_color+")";
@@ -58,40 +58,60 @@ class App extends Component {
       bodyElement.item(0).style.backgroundImage = "linear-gradient(to right, #859398, #283048)";
     }
     return(
-      <Router>
-        {isSignedIn?<Redirect to={`/${route}`}/>:<></>}
+      <div>
+        {isSignedIn?location.state?.from?<Redirect to={location.state?.from}/>:<Redirect to={`/${route}`}/>:<></>}
         <Switch>
-          <Route path="/signin">
+          <Route exact path="/signin">
             <Particles className='my-particles' params = {particleParams}/>
-            <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+            <Navigation isSignedIn = {isSignedIn} route = "signin" onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
             <SignIn onRouteChange = {onRouteChange}/>
           </Route>
-          <Route path="/signup">
+          <Route exact path="/signup">
             <Particles className='my-particles' params = {particleParams}/>
-            <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+            <Navigation isSignedIn = {isSignedIn} route = "signup" onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
             <Register onRouteChange = {onRouteChange}/>
           </Route>
-          <Route path="/profile">
-            {!isSignedIn?<Redirect to="/signin"/>:<></>}
-            <Particles className='my-particles' params = {particleParams}/>
-            <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
-            <Profile/>
+          <Route exact path="/profile">
+            {!isSignedIn
+              ?<Redirect to={{pathname: "/signin", state: {from: location.pathname}}}/>
+              :<>
+                  <Particles className='my-particles' params = {particleParams}/>
+                  <Navigation isSignedIn = {isSignedIn} route = "profile" onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+                  <Profile/>
+                </>}
           </Route>
-          <Route path="/">
-            {!isSignedIn?<Redirect to="/signin"/>:<></>}
-            <Particles className='my-particles' params = {particleParams}/>
-            <Navigation isSignedIn = {isSignedIn} route = {route} onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
-            <div>
-              <Logo />
-              <Rank user = {user}/>
-              <ImageSubmitForm onInputChange = {onInputChange} onImageSubmit = {this.onImageSubmit} />
-              {(imageUrl !== '')?(<FaceDetect imageUrl = {imageUrl}/>):(<div></div>)}
-            </div>
+          <Route exact path="/home">
+            {!isSignedIn
+              ?<Redirect to={{pathname: "/signin", state: {from: location.pathname}}}/>
+              :<>
+                  <Particles className='my-particles' params = {particleParams}/>
+                  <Navigation isSignedIn = {isSignedIn} route = "home" onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+                  <div>
+                    <Logo />
+                    <Rank user = {user}/>
+                    <ImageSubmitForm onInputChange = {onInputChange} onImageSubmit = {this.onImageSubmit} />
+                    {(imageUrl !== '')?(<FaceDetect imageUrl = {imageUrl}/>):(<div></div>)}
+                  </div>
+                </>}
+          </Route>
+          <Route exact path="/">
+            {!isSignedIn
+              ?<Redirect to={{pathname: "/signin", state: {from: location.pathname}}}/>
+              :<>
+                  <Particles className='my-particles' params = {particleParams}/>
+                  <Navigation isSignedIn = {isSignedIn} route = "home" onRouteChange = {onRouteChange} onUserSignOut = {onUserSignOut} avatarId = {user.avatar_id}/>
+                  <div>
+                    <Logo />
+                    <Rank user = {user}/>
+                    <ImageSubmitForm onInputChange = {onInputChange} onImageSubmit = {this.onImageSubmit} />
+                    {(imageUrl !== '')?(<FaceDetect imageUrl = {imageUrl}/>):(<div></div>)}
+                  </div>
+                </>}
           </Route>
         </Switch>
-      </Router>
+      </div>
     )
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(App));
